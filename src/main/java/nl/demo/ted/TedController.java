@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,29 +23,8 @@ import nl.demo.ted.repository.TedRepository;
 @RestController()
 @RequestMapping(value = "/ted-talks", produces = "application/json")
 public class TedController {
+
 	private TedRepository repository;
-
-	private void mapModelToJpa(TedTalk ted, TedRecord tedRecord) {
-		tedRecord.setId(ted.getId());
-		tedRecord.setAuthor(ted.getAuthor());
-		tedRecord.setTitle(ted.getTitle());
-		tedRecord.setLikes(ted.getLikes());
-		tedRecord.setViews(ted.getViews());
-		tedRecord.setLink(ted.getLink());
-		var date = ted.getDate() == null ? null : new Date(ted.getDate());
-		tedRecord.setDate(date);
-	}
-
-	private void mapJpaToModel(TedRecord tedRecord, TedTalk ted) {
-		ted.setId(tedRecord.getId());
-		ted.setAuthor(tedRecord.getAuthor());
-		ted.setTitle(tedRecord.getTitle());
-		ted.setLikes(tedRecord.getLikes());
-		ted.setViews(tedRecord.getViews());
-		ted.setLink(tedRecord.getLink());
-		var date = tedRecord.getDate() == null ? null : tedRecord.getDate().getTime();
-		ted.setDate(date);
-	}
 
 	TedController(TedRepository repository) {
 		this.repository = repository;
@@ -55,11 +32,7 @@ public class TedController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<TedTalk> getTedTalk(
-			@PathVariable String id,
-			@RequestParam(required = false) String author,
-			@RequestParam(required = false) String title,
-			@RequestParam(required = false) Long minViews,
-			@RequestParam(required = false) Long minLikes
+			@PathVariable String id
 	) {
 		var record = this.repository.findById(id).orElse(null);
 		if (record == null) {
@@ -89,8 +62,8 @@ public class TedController {
 
 	@PostMapping()
 	public ResponseEntity<Void> postTedTalk(@RequestBody TedTalk ted) {
-		var existingRecord = this.repository.findById(ted.getId()).orElse(null);
-		if (existingRecord != null) {
+		var existingRecord = this.repository.findById(ted.getId());
+		if (existingRecord.isPresent()) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		var newRecord = new TedRecord();
@@ -117,6 +90,28 @@ public class TedController {
 	public ResponseEntity<Void> putTedTalk(@PathVariable String id) {
 		this.repository.deleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	private void mapModelToJpa(TedTalk ted, TedRecord tedRecord) {
+		tedRecord.setId(ted.getId());
+		tedRecord.setAuthor(ted.getAuthor());
+		tedRecord.setTitle(ted.getTitle());
+		tedRecord.setLikes(ted.getLikes());
+		tedRecord.setViews(ted.getViews());
+		tedRecord.setLink(ted.getLink());
+		var date = ted.getDate() == null ? null : new Date(ted.getDate());
+		tedRecord.setDate(date);
+	}
+
+	private void mapJpaToModel(TedRecord tedRecord, TedTalk ted) {
+		ted.setId(tedRecord.getId());
+		ted.setAuthor(tedRecord.getAuthor());
+		ted.setTitle(tedRecord.getTitle());
+		ted.setLikes(tedRecord.getLikes());
+		ted.setViews(tedRecord.getViews());
+		ted.setLink(tedRecord.getLink());
+		var date = tedRecord.getDate() == null ? null : tedRecord.getDate().getTime();
+		ted.setDate(date);
 	}
 
 }

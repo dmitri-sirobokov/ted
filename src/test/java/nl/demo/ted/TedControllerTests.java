@@ -27,49 +27,19 @@ import nl.demo.ted.repository.TedRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TedControllerTests {
+	@LocalServerPort
+	private int port;
+
 	private final TestRestTemplate restTemplate = new TestRestTemplate();
 	private final HttpHeaders headers = new HttpHeaders();
-
 	private final List<TedRecord> tedRecords = new ArrayList<>();
 
 	@MockBean
 	private TedRepository repository;
 
-	private String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
-
-	private <T> ResponseEntity<T> get(String url, Class<T> responseType) {
-		HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.GET, httpEntity, responseType);
-	}
-
-	private <T, V> ResponseEntity<T> post(String url, V entity, Class<T> responseType) {
-		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.POST, httpEntity, responseType);
-	}
-
-	private <T, V> ResponseEntity<T> put(String url, V entity, Class<T> responseType) {
-		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PUT, httpEntity, responseType);
-	}
-
-	private <T> ResponseEntity<T> patch(String url, T entity, Class<T> responseType) {
-		HttpEntity<T> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PATCH, httpEntity, responseType);
-	}
-
-	private ResponseEntity<Void> delete(String url) {
-		HttpEntity<Void> httpEntity = new HttpEntity<>(null);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.DELETE, httpEntity, Void.class);
-	}
-
 	public TedControllerTests() {
 
 	}
-
-	@LocalServerPort
-	private int port;
 
 	@BeforeEach
 	void setup() {
@@ -87,6 +57,8 @@ class TedControllerTests {
 			String id = a.getArgument(0);
 			return this.tedRecords.stream().filter(r -> Objects.equals(r.getId(), id)).findFirst();
 		});
+
+		Mockito.when(this.repository.findAll()).thenAnswer((a) -> this.tedRecords);
 
 		// mock save record to database
 		Mockito.when(this.repository.save(Mockito.any())).thenAnswer((a) -> {
@@ -117,10 +89,18 @@ class TedControllerTests {
 	@Test
 	void getExisting() {
 		var responseEntity = this.get("/ted-talks/1", TedTalk.class);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		var result = responseEntity.getBody();
-		assertEquals(result.getId(), "1");
-		assertEquals(result.getTitle(), "title1");
+		assertEquals("1", result.getId());
+		assertEquals("title1", result.getTitle());
+	}
+
+	@Test
+	void getAll() {
+		var responseEntity = this.get("/ted-talks", (Class<List<TedTalk>>)(Class)List.class);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		var result = responseEntity.getBody();
+		assertEquals(1, result.size());
 	}
 
 	@Test
@@ -133,15 +113,15 @@ class TedControllerTests {
 		ted.setAuthor("author_updated");
 
 		var responseEntity = this.put("/ted-talks/1", ted, Void.class);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.NO_CONTENT);
+		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
 
 		var result = tedRecords.stream().filter(r -> Objects.equals(r.getId(), "1")).findFirst().orElse(null);
 		assertNotNull(result);
-		assertEquals(result.getId(), "1");
-		assertEquals(result.getViews(), 2);
-		assertEquals(result.getLikes(), 3);
-		assertEquals(result.getTitle(), "title_updated");
-		assertEquals(result.getAuthor(), "author_updated");
+		assertEquals("1", result.getId());
+		assertEquals(2, result.getViews());
+		assertEquals(3, result.getLikes());
+		assertEquals("title_updated", result.getTitle());
+		assertEquals("author_updated", result.getAuthor());
 	}
 
 	@Test
@@ -154,15 +134,15 @@ class TedControllerTests {
 		ted.setAuthor("new_author");
 
 		var responseEntity = this.put("/ted-talks/2", ted, Void.class);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
+		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
 		var result = tedRecords.stream().filter(r -> Objects.equals(r.getId(), "2")).findFirst().orElse(null);
 		assertNotNull(result);
-		assertEquals(result.getId(), "2");
-		assertEquals(result.getViews(), 2);
-		assertEquals(result.getLikes(), 3);
-		assertEquals(result.getTitle(), "new_title");
-		assertEquals(result.getAuthor(), "new_author");
+		assertEquals("2", result.getId());
+		assertEquals(2, result.getViews());
+		assertEquals(3, result.getLikes());
+		assertEquals("new_title", result.getTitle());
+		assertEquals("new_author", result.getAuthor());
 	}
 
 	@Test
@@ -175,15 +155,15 @@ class TedControllerTests {
 		ted.setAuthor("new_author");
 
 		var responseEntity = this.post("/ted-talks", ted, Void.class);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
+		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
 		var result = tedRecords.stream().filter(r -> Objects.equals(r.getId(), "2")).findFirst().orElse(null);
 		assertNotNull(result);
-		assertEquals(result.getId(), "2");
-		assertEquals(result.getViews(), 2);
-		assertEquals(result.getLikes(), 3);
-		assertEquals(result.getTitle(), "new_title");
-		assertEquals(result.getAuthor(), "new_author");
+		assertEquals("2", result.getId());
+		assertEquals(2, result.getViews());
+		assertEquals(3, result.getLikes());
+		assertEquals("new_title", result.getTitle());
+		assertEquals("new_author", result.getAuthor());
 	}
 
 	@Test
@@ -196,7 +176,7 @@ class TedControllerTests {
 		ted.setAuthor("new_author");
 
 		var responseEntity = this.post("/ted-talks", ted, Void.class);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+		assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -208,6 +188,36 @@ class TedControllerTests {
 
 		// non-existing resource deletion should result in Http OK
 		responseEntity = this.delete("/ted-talks/2");
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
+
+	private String createURLWithPort(String uri) {
+		return "http://localhost:" + port + uri;
+	}
+
+	private <T> ResponseEntity<T> get(String url, Class<T> responseType) {
+		HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
+		return restTemplate.exchange(createURLWithPort(url), HttpMethod.GET, httpEntity, responseType);
+	}
+
+	private <T, V> ResponseEntity<T> post(String url, V entity, Class<T> responseType) {
+		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
+		return restTemplate.exchange(createURLWithPort(url), HttpMethod.POST, httpEntity, responseType);
+	}
+
+	private <T, V> ResponseEntity<T> put(String url, V entity, Class<T> responseType) {
+		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
+		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PUT, httpEntity, responseType);
+	}
+
+	private <T> ResponseEntity<T> patch(String url, T entity, Class<T> responseType) {
+		HttpEntity<T> httpEntity = new HttpEntity<>(entity);
+		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PATCH, httpEntity, responseType);
+	}
+
+	private ResponseEntity<Void> delete(String url) {
+		HttpEntity<Void> httpEntity = new HttpEntity<>(null);
+		return restTemplate.exchange(createURLWithPort(url), HttpMethod.DELETE, httpEntity, Void.class);
+	}
+
 }

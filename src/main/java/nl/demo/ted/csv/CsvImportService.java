@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,7 +39,7 @@ public class CsvImportService {
 	private long parseLongNoException(String s) {
 		try {
 			return Long.parseLong(s);
-		} catch (NumberFormatException _ex) {
+		} catch (NumberFormatException ex) {
 			logger.warn(String.format("Unable to parse '%s' as long integer. Zero value is used.", s));
 			return 0L;
 		}
@@ -50,7 +49,7 @@ public class CsvImportService {
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("MMM y", Locale.ENGLISH);
 			return format.parse(s);
-		} catch (ParseException _ex) {
+		} catch (ParseException ex) {
 			logger.warn(String.format("Unable to parse '%s' as date. NULL value is used.", s));
 			return null;
 		}
