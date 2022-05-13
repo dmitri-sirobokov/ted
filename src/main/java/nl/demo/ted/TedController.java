@@ -52,12 +52,8 @@ public class TedController {
 	) {
 		// Todo: Need a custom query implementation by Specification/Example for query parameters
 		var records = repository.findAll();
-		var result = records.stream().map((r) -> {
-			var ted = new TedTalk();
-			mapJpaToModel(r, ted);
-			return ted;
-		}).collect(Collectors.toList());
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		var tedTalks = records.stream().map(this::mapJpaToModel).collect(Collectors.toList());
+		return new ResponseEntity<>(tedTalks, HttpStatus.OK);
 	}
 
 	@PostMapping()
@@ -112,6 +108,12 @@ public class TedController {
 		ted.setLink(tedRecord.getLink());
 		var date = tedRecord.getDate() == null ? null : tedRecord.getDate().getTime();
 		ted.setDate(date);
+	}
+
+	private TedTalk mapJpaToModel(TedRecord tedRecord) {
+		var ted = new TedTalk();
+		mapJpaToModel(tedRecord, ted);
+		return ted;
 	}
 
 }
