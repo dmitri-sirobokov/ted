@@ -26,7 +26,7 @@ import nl.demo.ted.repository.TedRecord;
 import nl.demo.ted.repository.TedRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TedControllerTests {
+class ApiTests {
 	@LocalServerPort
 	private int port;
 
@@ -37,7 +37,7 @@ class TedControllerTests {
 	@MockBean
 	private TedRepository repository;
 
-	public TedControllerTests() {
+	public ApiTests() {
 
 	}
 
@@ -93,6 +93,12 @@ class TedControllerTests {
 		var result = responseEntity.getBody();
 		assertEquals("1", result.getId());
 		assertEquals("title1", result.getTitle());
+	}
+
+	@Test
+	void getNonExisting() {
+		var responseEntity = this.get("/ted-talks/2", TedTalk.class);
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test

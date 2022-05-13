@@ -1,0 +1,1 @@
+INSERT INTO ted_talks(id, title, author, likes, views, link) VALUES ('1', 'title 1', 'author 1', 1, 2, 'http://somedomain.com/ted1')
