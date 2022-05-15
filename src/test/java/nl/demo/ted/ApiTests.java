@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,7 +59,13 @@ class ApiTests {
 			return this.tedRecords.stream().filter(r -> Objects.equals(r.getId(), id)).findFirst();
 		});
 
+		Mockito.when(this.repository.existsById(Mockito.anyString())).thenAnswer((a) -> {
+			String id = a.getArgument(0);
+			return this.tedRecords.stream().anyMatch(r -> Objects.equals(r.getId(), id));
+		});
+
 		Mockito.when(this.repository.findAll()).thenAnswer((a) -> this.tedRecords);
+		Mockito.when(this.repository.findAll(Mockito.any(Specification.class))).thenAnswer((a) -> this.tedRecords);
 
 		// mock save record to database
 		Mockito.when(this.repository.save(Mockito.any())).thenAnswer((a) -> {
@@ -97,7 +104,7 @@ class ApiTests {
 
 	@Test
 	void getNonExisting() {
-		var responseEntity = this.get("/ted-talks/2", TedTalk.class);
+		var responseEntity = this.get("/ted-talks/2", Void.class);
 		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 

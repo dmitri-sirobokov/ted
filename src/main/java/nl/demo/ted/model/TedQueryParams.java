@@ -7,12 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TedTalk {
-	private String id;
+public class TedQueryParams {
 	private String author;
 	private String title;
-	private long views;
-	private long likes;
-	private String link;
-	private Long date;
+	private Long minLikes;
+	private Long maxLikes;
+	private Long minViews;
+	private Long maxViews;
 }
