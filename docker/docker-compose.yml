@@ -5,17 +5,17 @@ services:
     ports:
       - "9999:8080"
     networks:
-      - ted-mysql
+      - ted-network
     depends_on:
       - mysqldb
 
   mysqldb:
     image: mysql:8
     networks:
-      - ted-mysql
+      - ted-network
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=ted_talks
 
 networks:
-  ted-mysql:
+  ted-network:

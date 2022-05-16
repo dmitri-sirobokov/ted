@@ -32,7 +32,7 @@ public class CsvImportService {
 	private final TedRepository repository;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	CsvImportService(TedRepository repository) {
+	public CsvImportService(final TedRepository repository) {
 		this.repository = repository;
 	}
 
