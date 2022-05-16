@@ -1,4 +1,4 @@
-#Description
+# Description
 TedTalk Rest API demo.
 
 We have an insatiable curiosity and what better way than to build a knowledge sharing platform to help
@@ -6,8 +6,8 @@ us on our way. Our mission is to build a new knowledge sharing platform where ou
 their curiosity going. To start off, we would like to have a list of TedTalks for
 our pilot system. 
 
-#Functional requirements
-##Backend
+# Functional requirements
+## Backend
 REST api should provide CRUD (Create/Read/Update/Delete) functionality.
 
 - {C} - Be able to add a new TedTalk
@@ -18,15 +18,15 @@ REST api should provide CRUD (Create/Read/Update/Delete) functionality.
   * Likes
 - {U} - Be able to update a TedTalk based on the id
 - {D} - Be able to delete a TedTalk based on the id
-##Front-end
+## Front-end
 We’re not looking for any front-end implementation.
 
-#Prerequisites
+# Prerequisites
 * MySql 5.7.31 or later
 * Java 11
 * Docker (optional)
 
-#Quick Start (without using docker)
+# Quick Start (without using docker)
 
 <code>git clone https://github.com/dmitri-sirobokov/ted.git</code>
 
@@ -42,12 +42,12 @@ startup and then deleted. To specify other location of the initial data, you can
 Run application using your favorite development tool, e.g. IntelliJ or Eclipse, 
 or run compiled jar from terminal with `java -jar` command.
 
-#Swagger
+# Swagger
 Navigate in browser to http://localhost:8080/swagger-ui.html.
 
 You should see Swagger documentation.
 
-#Tests
+# Tests
 Project includes the following tests:
 * TedControllerE2E: End-to-end test of the complete stack, using a number of api calls to verify a simple user CRUD-flow.
 * TedControllerRestIT: Integration test of the REST api, using TestRestTemplate, with mocked repository
