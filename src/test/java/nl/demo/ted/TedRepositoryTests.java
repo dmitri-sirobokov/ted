@@ -14,7 +14,7 @@ import nl.demo.ted.repository.TedRepository;
 @DataJpaTest
 @AutoConfigureTestDatabase
 @Sql("/inserts.sql")
-public class DataJpaTests {
+public class TedRepositoryTests {
 	@Autowired
 	private TedRepository repository;
 

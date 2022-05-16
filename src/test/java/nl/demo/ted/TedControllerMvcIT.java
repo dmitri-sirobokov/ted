@@ -22,7 +22,7 @@ import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.service.TedService;
 
 @WebMvcTest
-public class TedControllerMvcTests {
+public class TedControllerMvcIT {
 
 	@Autowired
 	private MockMvc mockMvc;

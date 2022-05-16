@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import nl.demo.ted.model.TedTalk;
 
-public class TedControllerE2ETests extends ApiBaseTests {
+public class TedControllerE2E extends ApiBaseTests {
 
 	@Test
 	public void basicCrudTest() {

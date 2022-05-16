@@ -19,13 +19,13 @@ import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.repository.TedRecord;
 import nl.demo.ted.repository.TedRepository;
 
-class TedControllerIntegrationTests extends ApiBaseTests {
+class TedControllerRestIT extends ApiBaseTests {
 	private final List<TedRecord> tedRecords = new ArrayList<>();
 
 	@MockBean
 	private TedRepository repository;
 
-	public TedControllerIntegrationTests() {
+	public TedControllerRestIT() {
 
 	}
 

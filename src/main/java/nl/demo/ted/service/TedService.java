@@ -12,8 +12,6 @@ import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.sun.istack.NotNull;
-
 import nl.demo.ted.model.TedQueryParams;
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.repository.TedRecord;
