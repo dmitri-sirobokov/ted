@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ApiBaseTests {
+public abstract class ApiBaseTests {
 	@LocalServerPort
 	private int port;
 	private final HttpHeaders headers = new HttpHeaders();
