@@ -11,34 +11,21 @@ import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.repository.TedRecord;
 import nl.demo.ted.repository.TedRepository;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ApiTests {
-	@LocalServerPort
-	private int port;
-
-	private final TestRestTemplate restTemplate = new TestRestTemplate();
-	private final HttpHeaders headers = new HttpHeaders();
+class TedControllerIntegrationTests extends ApiBaseTests {
 	private final List<TedRecord> tedRecords = new ArrayList<>();
 
 	@MockBean
 	private TedRepository repository;
 
-	public ApiTests() {
+	public TedControllerIntegrationTests() {
 
 	}
 
@@ -202,35 +189,6 @@ class ApiTests {
 		// non-existing resource deletion should result in Http OK
 		responseEntity = this.delete("/ted-talks/2");
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-	}
-
-	private String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
-
-	private <T> ResponseEntity<T> get(String url, Class<T> responseType) {
-		HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.GET, httpEntity, responseType);
-	}
-
-	private <T, V> ResponseEntity<T> post(String url, V entity, Class<T> responseType) {
-		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.POST, httpEntity, responseType);
-	}
-
-	private <T, V> ResponseEntity<T> put(String url, V entity, Class<T> responseType) {
-		HttpEntity<V> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PUT, httpEntity, responseType);
-	}
-
-	private <T> ResponseEntity<T> patch(String url, T entity, Class<T> responseType) {
-		HttpEntity<T> httpEntity = new HttpEntity<>(entity);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.PATCH, httpEntity, responseType);
-	}
-
-	private ResponseEntity<Void> delete(String url) {
-		HttpEntity<Void> httpEntity = new HttpEntity<>(null);
-		return restTemplate.exchange(createURLWithPort(url), HttpMethod.DELETE, httpEntity, Void.class);
 	}
 
 }
