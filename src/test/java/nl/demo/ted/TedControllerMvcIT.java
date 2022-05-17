@@ -6,8 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import nl.demo.ted.exception.TedNotFoundException;
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.service.TedService;
 
@@ -38,7 +37,7 @@ public class TedControllerMvcIT {
 		tedTalk.setAuthor("author 1");
 		Mockito.when(service.getTedTalkById("1")).thenReturn(tedTalk);
 
-		Mockito.when(service.getTedTalkById("2")).thenThrow(new EntityNotFoundException());
+		Mockito.when(service.getTedTalkById("2")).thenThrow(new TedNotFoundException("Ted talk not found"));
 
 		var allTedTalks = new ArrayList<TedTalk>();
 		allTedTalks.add(tedTalk);

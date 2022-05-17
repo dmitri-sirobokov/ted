@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
 
+import nl.demo.ted.exception.TedNotFoundException;
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.repository.TedRecord;
 import nl.demo.ted.repository.TedRepository;
@@ -59,7 +58,7 @@ public class TedServiceTests {
 
 	@Test
 	public void getTedTalkById_nonExisting() {
-		Assertions.assertThrows(EntityNotFoundException.class, () -> service.getTedTalkById("2"));
+		Assertions.assertThrows(TedNotFoundException.class, () -> service.getTedTalkById("2"));
 	}
 
 	@Test

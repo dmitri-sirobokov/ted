@@ -2,9 +2,6 @@ package nl.demo.ted;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import nl.demo.ted.exception.ApiError;
+import nl.demo.ted.exception.TedExistsException;
+import nl.demo.ted.exception.TedNotFoundException;
 import nl.demo.ted.model.TedQueryParams;
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.service.TedService;
@@ -78,13 +77,13 @@ public class TedController {
 		tedService.deleteTedTalkById(id);
 	}
 
-	@ExceptionHandler(EntityNotFoundException.class)
-	private ResponseEntity handleEntityNotFoundException(EntityNotFoundException ex) {
+	@ExceptionHandler(TedNotFoundException.class)
+	private ResponseEntity handleEntityNotFoundException(TedNotFoundException ex) {
 		return createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
 	}
 
-	@ExceptionHandler(EntityExistsException.class)
-	private ResponseEntity handleEntityExistsException(EntityExistsException ex) {
+	@ExceptionHandler(TedExistsException.class)
+	private ResponseEntity handleEntityExistsException(TedExistsException ex) {
 		return createErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
 	}
 

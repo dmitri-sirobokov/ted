@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import nl.demo.ted.exception.TedExistsException;
+import nl.demo.ted.exception.TedNotFoundException;
 import nl.demo.ted.model.TedQueryParams;
 import nl.demo.ted.model.TedTalk;
 import nl.demo.ted.repository.TedRecord;
@@ -29,7 +31,7 @@ public class TedService {
 	public TedTalk getTedTalkById(final String id) {
 		return repository.findById(id)
 				.map(this::mapJpaToModel)
-				.orElseThrow(() -> new EntityNotFoundException(String.format("Ted Talk %s is not found", id)));
+				.orElseThrow(() -> new TedNotFoundException(String.format("Ted Talk %s is not found", id)));
 	}
 
 	public List<TedTalk> getTedTalks(TedQueryParams queryParams) {
@@ -49,9 +51,10 @@ public class TedService {
 	 * @exception EntityExistsException if TedTalk with specified id already exists.
 	 *
 	 */
+	@Transactional
 	public void createTedTalk(TedTalk ted) {
 		if (repository.existsById(ted.getId())) {
-			throw new EntityExistsException(String.format("Ted Talk with specified id '%s' already exists", ted.getId()));
+			throw new TedExistsException(String.format("Ted Talk with specified id '%s' already exists", ted.getId()));
 		}
 		var newRecord = mapModelToJpa(ted);
 		repository.save(newRecord);
@@ -63,6 +66,7 @@ public class TedService {
 	 * @param ted {@link TedTalk} instance to save.
 	 * @return True if new entity is created, otherwise False.
 	 */
+	@Transactional
 	public boolean createOrUpdateTedTalk(TedTalk ted) {
 		var exists = repository.existsById(ted.getId());
 		var record = mapModelToJpa(ted);
@@ -70,6 +74,7 @@ public class TedService {
 		return !exists;
 	}
 
+	@Transactional
 	public void deleteTedTalkById(String id) {
 		repository.deleteById(id);
 	}
